@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "886362056702",
+    "project_id": "location-remainder-nanodegree",
+    "storage_bucket": "location-remainder-nanodegree.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:886362056702:android:39919a3cacc96fb77cc2af",
+        "android_client_info": {
+          "package_name": "com.udacity.project4"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "886362056702-pj5m3vj0uuql8qfgrr42in4q8c2i5bej.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.udacity.project4",
+            "certificate_hash": "8ecd8849fd03c3656163a7a2bcc4ac4a89fc7976"
+          }
+        },
+        {
+          "client_id": "886362056702-q9poova65n6b1020nje4q3dp851d0m2c.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC9VuiqJ2hJtTM_cd4NjB7mP1O9yQbaBvI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "886362056702-5npoj63n8ki72k1n8hqnmqk6e8ob7me8.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
