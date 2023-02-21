@@ -58,7 +58,7 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
                     .show()
                 getLocation()
 
-            } else if (it[Manifest.permission.ACCESS_COARSE_LOCATION] == true) {
+            } else if (it[Manifest.permission.ACCESS_COARSE_LOCATION] == true){
                 Toast.makeText(
                     requireContext(),
                     "Precise location is highly recommended for full app features",
@@ -215,7 +215,6 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
     }
 
 
-
     @SuppressLint("MissingPermission")
     private fun getLocation() {
         fusedLocationClient.lastLocation.addOnSuccessListener { location: Location? ->
@@ -226,9 +225,7 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
 
                 //show the location on the map
                 val locationObject = LatLng(userLatitude!!, userLongitude!!)
-                map.moveCamera(CameraUpdateFactory.newLatLngZoom(locationObject, 13f))
-
-
+                map.moveCamera(CameraUpdateFactory.newLatLngZoom(locationObject, 15f))
             }
         }
 

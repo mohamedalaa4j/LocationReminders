@@ -37,6 +37,8 @@ ext {
     // Sdk and tools
     // Support library and architecture components support minSdk 14 and above.
     minSdkVersion = 16
+//    targetSdkVersion = 31
+//    compileSdkVersion = 31
     targetSdkVersion = 30
     compileSdkVersion = 30
 
