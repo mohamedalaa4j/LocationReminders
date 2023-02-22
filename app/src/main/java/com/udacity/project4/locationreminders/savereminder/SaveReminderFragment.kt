@@ -35,32 +35,31 @@ class SaveReminderFragment : BaseFragment() {
     override val _viewModel: SaveReminderViewModel by inject()
     private lateinit var binding: FragmentSaveReminderBinding
 
-
     private val geofencePendingIntent: PendingIntent by lazy {
         val intent = Intent(requireContext(), GeofenceBroadcastReceiver::class.java)
         intent.action = ACTION_GEOFENCE_EVENT
 
-                    PendingIntent.getBroadcast(
+//                    PendingIntent.getBroadcast(
+//                requireContext(),
+//                0,
+//                intent,
+//                PendingIntent.FLAG_UPDATE_CURRENT )
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S){
+            PendingIntent.getBroadcast(
                 requireContext(),
                 0,
                 intent,
-                PendingIntent.FLAG_UPDATE_CURRENT )
-
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R){
-//            PendingIntent.getBroadcast(
-//                requireContext(),
-//                0,
-//                intent,
-//                PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
-//            )
-//        }else {
-//            PendingIntent.getBroadcast(
-//                requireContext(),
-//                0,
-//                intent,
-//                PendingIntent.FLAG_UPDATE_CURRENT
-//            )
-//        }
+                PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_MUTABLE
+            )
+        }else {
+            PendingIntent.getBroadcast(
+                requireContext(),
+                0,
+                intent,
+                PendingIntent.FLAG_UPDATE_CURRENT
+            )
+        }
 
     }
 
@@ -227,10 +226,10 @@ class SaveReminderFragment : BaseFragment() {
 
             geofencingClient.addGeofences(geofencingRequest, geofencePendingIntent)
                 .addOnSuccessListener {
-                    Toast.makeText(
-                        requireContext(), activity?.getString(R.string.geofences_added),
-                        Toast.LENGTH_SHORT
-                    ).show()
+//                    Toast.makeText(
+//                        requireContext(), activity?.getString(R.string.geofences_added),
+//                        Toast.LENGTH_SHORT
+//                    ).show()
                 }
                 .addOnFailureListener {
 //                    Toast.makeText(

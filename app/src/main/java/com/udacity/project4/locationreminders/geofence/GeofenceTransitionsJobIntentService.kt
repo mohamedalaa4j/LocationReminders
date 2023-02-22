@@ -33,6 +33,8 @@ class GeofenceTransitionsJobIntentService : JobIntentService(), CoroutineScope {
                 intent
             )
         }
+
+
     }
 
     override fun onHandleWork(intent: Intent) {
@@ -47,7 +49,7 @@ class GeofenceTransitionsJobIntentService : JobIntentService(), CoroutineScope {
     }
 
     //TODO: get the request id of the current geofence
-    private fun sendNotification(triggeringGeofences: List<Geofence>) {
+     fun sendNotification(triggeringGeofences: List<Geofence>) {
         Log.e("geofence","geofence")
         for (i in triggeringGeofences.indices) {
             val requestId = triggeringGeofences[i].requestId

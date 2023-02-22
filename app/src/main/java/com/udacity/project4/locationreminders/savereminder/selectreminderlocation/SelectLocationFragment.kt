@@ -113,10 +113,12 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
         return binding.root
     }
 
+    @Deprecated("Deprecated in Java")
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.map_options, menu)
     }
 
+    @Deprecated("Deprecated in Java")
     override fun onOptionsItemSelected(item: MenuItem) = when (item.itemId) {
         //  Change the map type based on the user's selection.
         R.id.normal_map -> {
@@ -170,13 +172,13 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
                     .snippet(snippet)
             )
             val geocoder =
-                Geocoder(context, Locale.getDefault()).getFromLocation(
+                Geocoder(requireContext(), Locale.getDefault()).getFromLocation(
                     latLng.latitude,
                     latLng.longitude,
                     1
                 )
 
-            val address = geocoder[0].getAddressLine(0)
+            val address = geocoder?.get(0)?.getAddressLine(0)
 
             val poi = PointOfInterest(latLng, null, address)
 
@@ -222,6 +224,7 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
             if (location != null) {
                 userLatitude = location.latitude
                 userLongitude = location.longitude
+                Log.e("location",userLatitude.toString())
 
                 //show the location on the map
                 val locationObject = LatLng(userLatitude!!, userLongitude!!)

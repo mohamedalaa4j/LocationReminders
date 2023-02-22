@@ -3,7 +3,9 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="app/src/main/res/drawable/ic_no_data.xml" value="0.1925" />
         <entry key="app/src/main/res/layout/activity_authentication.xml" value="0.25" />
+        <entry key="app/src/main/res/layout/activity_reminder_description.xml" value="0.2078125" />
         <entry key="app/src/main/res/layout/activity_reminders.xml" value="0.1" />
         <entry key="app/src/main/res/layout/fragment_reminders.xml" value="0.2078125" />
         <entry key="app/src/main/res/layout/fragment_save_reminder.xml" value="0.2078125" />
