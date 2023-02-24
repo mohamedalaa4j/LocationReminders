@@ -41,7 +41,7 @@ class RemindersDaoTest {
     fun closeDb() = database.close()
 
     @Test
-    fun saveReminderAndGetReminderById() = runBlockingTest {
+    fun saveReminder_getReminderById() = runBlockingTest {
         // GIVEN - Insert a task.
         val reminder1 = ReminderDTO("Title1", "Description1", "Location1", 29.976480, 31.131302)
         database.reminderDao().saveReminder(reminder1)
@@ -56,6 +56,42 @@ class RemindersDaoTest {
         assertThat(loaded?.location, `is`(reminder1.location))
         assertThat(loaded?.latitude, `is`(reminder1.latitude))
         assertThat(loaded?.longitude, `is`(reminder1.longitude))
+    }
+
+    @Test
+    fun saveManyReminders_getReminders() = runBlockingTest {
+        // GIVEN - Insert 3 tasks.
+        val reminder1 = ReminderDTO("Title1", "Description1", "Location1", 29.976480, 31.131302)
+        val reminder2 = ReminderDTO("Title2", "Description2", "Location2", 29.976480, 31.131302)
+        val reminder3 = ReminderDTO("Title3", "Description3", "Location3", 29.976480, 31.131302)
+        database.reminderDao().saveReminder(reminder1)
+        database.reminderDao().saveReminder(reminder2)
+        database.reminderDao().saveReminder(reminder3)
+
+        // WHEN - Get the all tasks from the database.
+        val loaded = database.reminderDao().getReminders()
+
+        // THEN - The loaded data contains 3 objects.
+        assertThat(loaded.size, `is`(3))
+    }
+
+    @Test
+    fun saveManyReminders_deleteAllReminders() = runBlockingTest {
+        // GIVEN - Insert 3 tasks.
+        val reminder1 = ReminderDTO("Title1", "Description1", "Location1", 29.976480, 31.131302)
+        val reminder2 = ReminderDTO("Title2", "Description2", "Location2", 29.976480, 31.131302)
+        val reminder3 = ReminderDTO("Title3", "Description3", "Location3", 29.976480, 31.131302)
+        database.reminderDao().saveReminder(reminder1)
+        database.reminderDao().saveReminder(reminder2)
+        database.reminderDao().saveReminder(reminder3)
+
+        // WHEN - Get the all tasks from the database after deleting all reminders.
+        database.reminderDao().deleteAllReminders()
+        val loaded = database.reminderDao().getReminders()
+
+
+        // THEN - The loaded data contains no items.
+        assertThat(loaded.size, `is`(0))
     }
 
 }
