@@ -38,15 +38,17 @@ class RemindersDaoTest {
     }
 
     @After
-    fun closeDb() = database.close()
+    fun closeDb() {
+        database.close()
+    }
 
     @Test
     fun saveReminder_getReminderById() = runBlockingTest {
-        // GIVEN - Insert a task.
+        // GIVEN - Insert a reminder.
         val reminder1 = ReminderDTO("Title1", "Description1", "Location1", 29.976480, 31.131302)
         database.reminderDao().saveReminder(reminder1)
 
-        // WHEN - Get the task by id from the database.
+        // WHEN - Get the reminder by id from the database.
         val loaded = database.reminderDao().getReminderById(reminder1.id)
 
         // THEN - The loaded data contains the expected values.
@@ -60,7 +62,7 @@ class RemindersDaoTest {
 
     @Test
     fun saveManyReminders_getReminders() = runBlockingTest {
-        // GIVEN - Insert 3 tasks.
+        // GIVEN - Insert 3 reminders.
         val reminder1 = ReminderDTO("Title1", "Description1", "Location1", 29.976480, 31.131302)
         val reminder2 = ReminderDTO("Title2", "Description2", "Location2", 29.976480, 31.131302)
         val reminder3 = ReminderDTO("Title3", "Description3", "Location3", 29.976480, 31.131302)
@@ -68,7 +70,7 @@ class RemindersDaoTest {
         database.reminderDao().saveReminder(reminder2)
         database.reminderDao().saveReminder(reminder3)
 
-        // WHEN - Get the all tasks from the database.
+        // WHEN - Get the all reminders from the database.
         val loaded = database.reminderDao().getReminders()
 
         // THEN - The loaded data contains 3 objects.
@@ -77,7 +79,7 @@ class RemindersDaoTest {
 
     @Test
     fun saveManyReminders_deleteAllReminders() = runBlockingTest {
-        // GIVEN - Insert 3 tasks.
+        // GIVEN - Insert 3 reminders.
         val reminder1 = ReminderDTO("Title1", "Description1", "Location1", 29.976480, 31.131302)
         val reminder2 = ReminderDTO("Title2", "Description2", "Location2", 29.976480, 31.131302)
         val reminder3 = ReminderDTO("Title3", "Description3", "Location3", 29.976480, 31.131302)
@@ -85,7 +87,7 @@ class RemindersDaoTest {
         database.reminderDao().saveReminder(reminder2)
         database.reminderDao().saveReminder(reminder3)
 
-        // WHEN - Get the all tasks from the database after deleting all reminders.
+        // WHEN - Get the all reminders from the database after deleting all reminders.
         database.reminderDao().deleteAllReminders()
         val loaded = database.reminderDao().getReminders()
 
