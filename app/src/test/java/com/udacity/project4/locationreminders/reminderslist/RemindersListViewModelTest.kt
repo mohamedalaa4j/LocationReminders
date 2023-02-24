@@ -13,10 +13,13 @@ import kotlinx.coroutines.test.resumeDispatcher
 import kotlinx.coroutines.test.runBlockingTest
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.`is`
+import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.koin.android.ext.koin.androidContext
+import org.koin.core.context.startKoin
 import org.koin.core.context.stopKoin
 
 @RunWith(AndroidJUnit4::class)
@@ -56,14 +59,19 @@ class RemindersListViewModelTest {
 
         remindersListViewModel =
             RemindersListViewModel(ApplicationProvider.getApplicationContext(), fakeDataSource)
+    }
 
+    @After
+    fun cleanUp() {
+        remindersList.clear()
+        remindersListViewModel.remindersList.value = null
     }
 
     @Test
-    fun loadReminders() {
+    fun loadReminders_remindersIsCorrect() {
 
         // GIVEN a ViewModel
-        // initialised in @Before method
+        // initialized in @Before method
 
         // WHEN reminders are loaded
         mainCoroutineRule.pauseDispatcher()
@@ -104,10 +112,10 @@ class RemindersListViewModelTest {
     }
 
     @Test
-    fun showNoData() = runBlockingTest {
+    fun noReminders_showNoData() = runBlockingTest {
 
         // GIVEN a ViewModel
-        // initialised in @Before method
+        // initialized in @Before method
 
         // WHEN there is no reminders
         mainCoroutineRule.pauseDispatcher()
@@ -119,4 +127,20 @@ class RemindersListViewModelTest {
         assertThat(remindersListViewModel.showNoData.value, `is`(true))
     }
 
+    @Test
+    fun shouldReturnErrorTrue_showSnackBarWithErrorMessage() {
+
+        // GIVEN a ViewModel
+        // initialized in @Before method
+
+        // WHEN shouldReturnError = true
+        fakeDataSource.shouldReturnError(true)
+
+        mainCoroutineRule.pauseDispatcher()
+        remindersListViewModel.loadReminders()
+        mainCoroutineRule.resumeDispatcher()
+
+        // THEN showSnackBar should show "There is an error"
+        assertThat(remindersListViewModel.showSnackBar.getOrAwaitValue(), `is`("There is an error"))
+    }
 }
