@@ -18,8 +18,6 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.koin.android.ext.koin.androidContext
-import org.koin.core.context.startKoin
 import org.koin.core.context.stopKoin
 
 @RunWith(AndroidJUnit4::class)
