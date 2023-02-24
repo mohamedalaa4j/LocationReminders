@@ -11,8 +11,7 @@ import kotlinx.coroutines.launch
 
 class RemindersListViewModel(
     app: Application,
-    private val dataSource: ReminderDataSource
-) : BaseViewModel(app) {
+    private val dataSource: ReminderDataSource) : BaseViewModel(app) {
     // list that holds the reminder data to be displayed on the UI
     val remindersList = MutableLiveData<List<ReminderDataItem>>()
 
@@ -42,8 +41,7 @@ class RemindersListViewModel(
                     })
                     remindersList.value = dataList
                 }
-                is Result.Error ->
-                    showSnackBar.value = result.message
+                is Result.Error -> showSnackBar.value = result.message
             }
 
             //check if no data has to be shown
@@ -54,7 +52,7 @@ class RemindersListViewModel(
     /**
      * Inform the user that there's not any data if the remindersList is empty
      */
-    private fun invalidateShowNoData() {
+     fun invalidateShowNoData() {
         showNoData.value = remindersList.value == null || remindersList.value!!.isEmpty()
     }
 }
