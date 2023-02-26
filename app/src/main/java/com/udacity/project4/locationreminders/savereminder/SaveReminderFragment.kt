@@ -45,14 +45,14 @@ class SaveReminderFragment : BaseFragment() {
 //                intent,
 //                PendingIntent.FLAG_UPDATE_CURRENT )
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S){
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             PendingIntent.getBroadcast(
                 requireContext(),
                 0,
                 intent,
                 PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_MUTABLE
             )
-        }else {
+        } else {
             PendingIntent.getBroadcast(
                 requireContext(),
                 0,
@@ -60,7 +60,6 @@ class SaveReminderFragment : BaseFragment() {
                 PendingIntent.FLAG_UPDATE_CURRENT
             )
         }
-
     }
 
     private lateinit var geofencingClient: GeofencingClient
@@ -141,6 +140,9 @@ class SaveReminderFragment : BaseFragment() {
                 ).show()
             } else {
 
+//             use the user entered reminder details to:
+//             1) add a geofencing request
+//             2) save the reminder to the local db
                 remainderObject = ReminderDataItem(
                     _viewModel.reminderTitle.value,
                     _viewModel.reminderDescription.value,
@@ -155,10 +157,6 @@ class SaveReminderFragment : BaseFragment() {
                     addGeofence()
                 }
 
-
-//            TODO: use the user entered reminder details to:
-//             1) add a geofencing request
-//             2) save the reminder to the local db
             }
         }
     }

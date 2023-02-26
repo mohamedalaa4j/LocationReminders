@@ -95,7 +95,7 @@ class RemindersActivityTest :
         IdlingRegistry.getInstance().unregister(dataBindingIdlingResource)
     }
 
-    //    TODO: add End to End testing to the app
+    // add End to End testing to the app
     @Test
     fun launchTheApp_fragmentContainerIsDisplayed() {
 

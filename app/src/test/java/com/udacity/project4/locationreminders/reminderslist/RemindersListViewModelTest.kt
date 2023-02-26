@@ -34,7 +34,6 @@ class RemindersListViewModelTest {
     private lateinit var remindersListViewModel: RemindersListViewModel
     private var remindersList = mutableListOf<ReminderDTO>()
     private lateinit var fakeDataSource: FakeDataSource
-//    private  var fakeDataSource = FakeDataSource(remindersList)
 
     @Before
     fun setupViewModelAndFakeDataSource() {

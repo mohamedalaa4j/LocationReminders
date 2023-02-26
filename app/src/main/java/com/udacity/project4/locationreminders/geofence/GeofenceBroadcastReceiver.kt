@@ -3,17 +3,9 @@ package com.udacity.project4.locationreminders.geofence
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
-import android.util.Log
-import com.google.android.gms.location.Geofence
-import com.google.android.gms.location.GeofenceStatusCodes
-import com.google.android.gms.location.GeofencingEvent
-import com.udacity.project4.locationreminders.data.ReminderDataSource
-import com.udacity.project4.locationreminders.data.dto.ReminderDTO
-import com.udacity.project4.locationreminders.data.dto.Result
-import com.udacity.project4.locationreminders.reminderslist.ReminderDataItem
-import kotlinx.coroutines.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import org.koin.core.KoinComponent
-import org.koin.core.inject
 import kotlin.coroutines.CoroutineContext
 
 
@@ -34,10 +26,10 @@ class GeofenceBroadcastReceiver : BroadcastReceiver(), KoinComponent {
         get() = Dispatchers.IO + coroutineJob
 
     override fun onReceive(context: Context, intent: Intent) {
-
 // implement the onReceive method to receive the geofencing events at the background
         GeofenceTransitionsJobIntentService.enqueueWork(context, intent)
     }
+
 
 //    override fun onReceive(context: Context?, intent: Intent?) {
 //        val geofencingEvent = GeofencingEvent.fromIntent(intent)
@@ -56,35 +48,34 @@ class GeofenceBroadcastReceiver : BroadcastReceiver(), KoinComponent {
 //        }
 //    }
 
-    //TODO: get the request id of the current geofence
-    private fun sendNotification(triggeringGeofences: List<Geofence>, context: Context) {
-        Log.e("geofence", "geofence")
-        for (i in triggeringGeofences.indices) {
-            val requestId = triggeringGeofences[i].requestId
-
-            //Get the local repository instance
-            val remindersLocalRepository: ReminderDataSource by inject()
-//        Interaction to the repository has to be through a coroutine scope
-            CoroutineScope(coroutineContext).launch(SupervisorJob()) {
-                //get the reminder with the request id
-                val result = remindersLocalRepository.getReminder(requestId)
-                if (result is Result.Success<ReminderDTO>) {
-                    val reminderDTO = result.data
-                    //send a notification to the user with the reminder details
-                    com.udacity.project4.utils.sendNotification(
-                        context, ReminderDataItem(
-                            reminderDTO.title,
-                            reminderDTO.description,
-                            reminderDTO.location,
-                            reminderDTO.latitude,
-                            reminderDTO.longitude,
-                            reminderDTO.id
-                        )
-                    )
-                }
-            }
-        }
-    }
+//    private fun sendNotification(triggeringGeofences: List<Geofence>, context: Context) {
+//        Log.e("geofence", "geofence")
+//        for (i in triggeringGeofences.indices) {
+//            val requestId = triggeringGeofences[i].requestId
+//
+//            //Get the local repository instance
+//            val remindersLocalRepository: ReminderDataSource by inject()
+////        Interaction to the repository has to be through a coroutine scope
+//            CoroutineScope(coroutineContext).launch(SupervisorJob()) {
+//                //get the reminder with the request id
+//                val result = remindersLocalRepository.getReminder(requestId)
+//                if (result is Result.Success<ReminderDTO>) {
+//                    val reminderDTO = result.data
+//                    //send a notification to the user with the reminder details
+//                    com.udacity.project4.utils.sendNotification(
+//                        context, ReminderDataItem(
+//                            reminderDTO.title,
+//                            reminderDTO.description,
+//                            reminderDTO.location,
+//                            reminderDTO.latitude,
+//                            reminderDTO.longitude,
+//                            reminderDTO.id
+//                        )
+//                    )
+//                }
+//            }
+//        }
+//    }
 
 
 }

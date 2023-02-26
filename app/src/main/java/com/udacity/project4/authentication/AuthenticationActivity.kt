@@ -27,12 +27,12 @@ class AuthenticationActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_authentication)
 
-        //TODO: Implement the create account and sign in using FirebaseUI, use sign in using email and sign in using Google
+        // Implement the create account and sign in using FirebaseUI, use sign in using email and sign in using Google
         binding.btnLogin.setOnClickListener {
             launchSignInFlow()
         }
 
-        //TODO: If the user was authenticated, send him to RemindersActivity
+        // If the user was authenticated, send him to RemindersActivity
         viewModel.authenticationState.observe(this, Observer {
             if (it == AuthenticationState.AUTHENTICATED) {
                 startActivity(Intent(this, RemindersActivity::class.java))

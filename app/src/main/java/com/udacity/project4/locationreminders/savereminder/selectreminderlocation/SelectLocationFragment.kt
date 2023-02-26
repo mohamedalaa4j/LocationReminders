@@ -58,7 +58,7 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
                     .show()
                 getLocation()
 
-            } else if (it[Manifest.permission.ACCESS_COARSE_LOCATION] == true){
+            } else if (it[Manifest.permission.ACCESS_COARSE_LOCATION] == true) {
                 Toast.makeText(
                     requireContext(),
                     "Precise location is highly recommended for full app features",
@@ -96,7 +96,6 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
         // zoom to the user location after taking his permission
         checkIfPermissionsGrantedOrNot()
 
-//        TODO: call this function after the user confirms on the selected location
         binding.btnSave.setOnClickListener {
             if (pointOfInterest == null) {
                 Toast.makeText(
@@ -105,6 +104,7 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
                     Toast.LENGTH_SHORT
                 ).show()
             } else {
+//              call this function after the user confirms on the selected location
                 onLocationSelected()
                 findNavController().popBackStack()
             }
@@ -224,7 +224,7 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
             if (location != null) {
                 userLatitude = location.latitude
                 userLongitude = location.longitude
-                Log.e("location",userLatitude.toString())
+                Log.e("location", userLatitude.toString())
 
                 //show the location on the map
                 val locationObject = LatLng(userLatitude!!, userLongitude!!)
