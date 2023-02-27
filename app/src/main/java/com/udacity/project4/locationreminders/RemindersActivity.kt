@@ -40,7 +40,7 @@ class RemindersActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        //  setContentView(R.layout.activity_reminders)
+//          setContentView(R.layout.activity_reminders)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_reminders)
 
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) !=

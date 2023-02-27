@@ -126,20 +126,6 @@ class SaveReminderFragment : BaseFragment() {
 
         binding.saveReminder.setOnClickListener {
 
-            if (binding.reminderTitle.text.isNullOrEmpty()) {
-                Toast.makeText(
-                    requireContext(),
-                    getString(R.string.err_enter_title),
-                    Toast.LENGTH_SHORT
-                ).show()
-            } else if (binding.reminderDescription.text.isNullOrEmpty()) {
-                Toast.makeText(
-                    requireContext(),
-                    getString(R.string.err_enter_description),
-                    Toast.LENGTH_SHORT
-                ).show()
-            } else {
-
 //             use the user entered reminder details to:
 //             1) add a geofencing request
 //             2) save the reminder to the local db
@@ -157,7 +143,7 @@ class SaveReminderFragment : BaseFragment() {
                     addGeofence()
                 }
 
-            }
+
         }
     }
 
