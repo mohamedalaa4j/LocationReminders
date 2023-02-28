@@ -2,6 +2,7 @@ package com.udacity.project4.locationreminders
 
 import android.Manifest
 import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
 import android.view.MenuItem
 import android.widget.Toast
@@ -35,6 +36,10 @@ class RemindersActivity : AppCompatActivity() {
                 Toast.makeText(this, "Permissions denied", Toast.LENGTH_SHORT).show()
 
             }
+
+            if (it[Manifest.permission.POST_NOTIFICATIONS] == false)
+            Toast.makeText(this, "Notifications feature is turned off", Toast.LENGTH_SHORT).show()
+
         }
 
 
@@ -57,6 +62,16 @@ class RemindersActivity : AppCompatActivity() {
                 )
             )
 
+        }
+
+        if (Build.VERSION.SDK_INT >= 33) {
+            if (ActivityCompat.checkSelfPermission(
+                    this,
+                    Manifest.permission.POST_NOTIFICATIONS
+                ) != PackageManager.PERMISSION_GRANTED
+            ) {
+                requestLocationPermissions.launch(arrayOf(Manifest.permission.POST_NOTIFICATIONS))
+            }
         }
 
 
