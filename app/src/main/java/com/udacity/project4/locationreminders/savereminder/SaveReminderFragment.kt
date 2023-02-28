@@ -4,16 +4,18 @@ import android.Manifest
 import android.annotation.SuppressLint
 import android.annotation.TargetApi
 import android.app.PendingIntent
+import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.location.LocationManager
 import android.os.Build
 import android.os.Bundle
+import android.provider.Settings
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.annotation.RequiresApi
 import androidx.core.app.ActivityCompat
 import androidx.databinding.DataBindingUtil
 import com.google.android.gms.location.Geofence
@@ -39,12 +41,6 @@ class SaveReminderFragment : BaseFragment() {
         val intent = Intent(requireContext(), GeofenceBroadcastReceiver::class.java)
         intent.action = ACTION_GEOFENCE_EVENT
 
-//                    PendingIntent.getBroadcast(
-//                requireContext(),
-//                0,
-//                intent,
-//                PendingIntent.FLAG_UPDATE_CURRENT )
-
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             PendingIntent.getBroadcast(
                 requireContext(),
@@ -65,13 +61,20 @@ class SaveReminderFragment : BaseFragment() {
     private lateinit var geofencingClient: GeofencingClient
     private lateinit var remainderObject: ReminderDataItem
 
-    private val runningQOrLater = android.os.Build.VERSION.SDK_INT >=
-            android.os.Build.VERSION_CODES.Q
+    private val runningQOrLater = Build.VERSION.SDK_INT >=
+            Build.VERSION_CODES.Q
 
-    private val requestLocationPermissions =
+    private val requestForegroundAndBackgroundLocationPermissions =
         if (runningQOrLater) {
             registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) {
                 if (it[Manifest.permission.ACCESS_FINE_LOCATION] == true && it[Manifest.permission.ACCESS_BACKGROUND_LOCATION] == true) {
+                    addGeofence()
+                } else if (it[Manifest.permission.ACCESS_COARSE_LOCATION] == true && it[Manifest.permission.ACCESS_BACKGROUND_LOCATION] == true) {
+                    Toast.makeText(
+                        requireContext(),
+                        "Precise location is highly recommended for full app features",
+                        Toast.LENGTH_SHORT
+                    ).show()
                     addGeofence()
 
                 } else {
@@ -87,6 +90,13 @@ class SaveReminderFragment : BaseFragment() {
             registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) {
                 if (it[Manifest.permission.ACCESS_FINE_LOCATION] == true) {
                     addGeofence()
+                } else if (it[Manifest.permission.ACCESS_COARSE_LOCATION] == true) {
+                    Toast.makeText(
+                        requireContext(),
+                        "Precise location is highly recommended for full app features",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                    addGeofence()
 
                 } else {
                     Toast.makeText(
@@ -99,10 +109,52 @@ class SaveReminderFragment : BaseFragment() {
             }
         }
 
+    private val requestLocationPermissions =
+        registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) {
+            if (it[Manifest.permission.ACCESS_FINE_LOCATION] == true) {
+                if (isGPSEnabled()) {
+                    _viewModel.navigationCommand.value =
+                        NavigationCommand.To(SaveReminderFragmentDirections.actionSaveReminderFragmentToSelectLocationFragment())
+                } else {
+                    Toast.makeText(
+                        context,
+                        "Location is disabled please enable it from the settings",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                    requireActivity().startActivity(Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS))
+                }
+
+            } else if (it[Manifest.permission.ACCESS_COARSE_LOCATION] == true) {
+                Toast.makeText(
+                    requireContext(),
+                    "Precise location is highly recommended for full app features",
+                    Toast.LENGTH_SHORT
+                ).show()
+
+                if (isGPSEnabled()) {
+                    _viewModel.navigationCommand.value =
+                        NavigationCommand.To(SaveReminderFragmentDirections.actionSaveReminderFragmentToSelectLocationFragment())
+                } else {
+                    Toast.makeText(
+                        context,
+                        "Location is disabled please enable it from the settings",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                    requireActivity().startActivity(Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS))
+                }
+            } else {
+                Toast.makeText(
+                    requireContext(),
+                    "Location permissions is required, You can enable it from the setting",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+        }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         binding =
             DataBindingUtil.inflate(inflater, R.layout.fragment_save_reminder, container, false)
 
@@ -116,32 +168,53 @@ class SaveReminderFragment : BaseFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.lifecycleOwner = this
-        binding.selectLocation.setOnClickListener {
-            //            Navigate to another fragment to get the user location
-            _viewModel.navigationCommand.value =
-                NavigationCommand.To(SaveReminderFragmentDirections.actionSaveReminderFragmentToSelectLocationFragment())
-        }
 
         geofencingClient = LocationServices.getGeofencingClient(requireContext())
+
+        binding.selectLocation.setOnClickListener {
+
+            if (isLocationPermissionsAreGranted()) {
+
+                if (isGPSEnabled()) {
+                    // Navigate to another fragment to get the user location
+                    _viewModel.navigationCommand.value =
+                        NavigationCommand.To(SaveReminderFragmentDirections.actionSaveReminderFragmentToSelectLocationFragment())
+                } else {
+                    Toast.makeText(
+                        context,
+                        "Location is disabled please enable it from the settings",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                    requireActivity().startActivity(Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS))
+                }
+            } else {
+                requestLocationPermissions.launch(
+                    arrayOf(
+                        Manifest.permission.ACCESS_FINE_LOCATION,
+                        Manifest.permission.ACCESS_COARSE_LOCATION
+                    )
+                )
+            }
+        }
 
         binding.saveReminder.setOnClickListener {
 
 //             use the user entered reminder details to:
 //             1) add a geofencing request
 //             2) save the reminder to the local db
-                remainderObject = ReminderDataItem(
-                    _viewModel.reminderTitle.value,
-                    _viewModel.reminderDescription.value,
-                    _viewModel.reminderSelectedLocationStr.value,
-                    _viewModel.latitude.value,
-                    _viewModel.longitude.value
-                )
+            remainderObject = ReminderDataItem(
+                _viewModel.reminderTitle.value,
+                _viewModel.reminderDescription.value,
+                _viewModel.reminderSelectedLocationStr.value,
+                _viewModel.latitude.value,
+                _viewModel.longitude.value
+            )
 
-                if (!foregroundAndBackgroundLocationPermissionApproved()) {
-                    requestForegroundAndBackgroundLocationPermissions()
-                } else {
-                    addGeofence()
-                }
+            if (!isForegroundAndBackgroundLocationPermissionGranted()) {
+                requestForegroundAndBackgroundLocationPermissions()
+            } else {
+                addGeofence()
+            }
 
 
         }
@@ -154,7 +227,7 @@ class SaveReminderFragment : BaseFragment() {
     }
 
     @TargetApi(29)
-    private fun foregroundAndBackgroundLocationPermissionApproved(): Boolean {
+    private fun isForegroundAndBackgroundLocationPermissionGranted(): Boolean {
         val foregroundLocationApproved = (
                 PackageManager.PERMISSION_GRANTED ==
                         ActivityCompat.checkSelfPermission(
@@ -177,17 +250,19 @@ class SaveReminderFragment : BaseFragment() {
     private fun requestForegroundAndBackgroundLocationPermissions() {
         if (runningQOrLater) {
             // Request permissions
-            requestLocationPermissions.launch(
+            requestForegroundAndBackgroundLocationPermissions.launch(
                 arrayOf(
                     Manifest.permission.ACCESS_FINE_LOCATION,
+                    Manifest.permission.ACCESS_COARSE_LOCATION,
                     Manifest.permission.ACCESS_BACKGROUND_LOCATION
                 )
             )
         } else {
             // Request permissions
-            requestLocationPermissions.launch(
+            requestForegroundAndBackgroundLocationPermissions.launch(
                 arrayOf(
-                    Manifest.permission.ACCESS_FINE_LOCATION
+                    Manifest.permission.ACCESS_FINE_LOCATION,
+                    Manifest.permission.ACCESS_COARSE_LOCATION
                 )
             )
         }
@@ -226,4 +301,28 @@ class SaveReminderFragment : BaseFragment() {
             _viewModel.onClear()
         }
     }
+
+    private fun isLocationPermissionsAreGranted(): Boolean {
+
+        return (ActivityCompat.checkSelfPermission(
+            requireContext(),
+            Manifest.permission.ACCESS_FINE_LOCATION
+        )
+                == PackageManager.PERMISSION_GRANTED
+                &&
+                ActivityCompat.checkSelfPermission(
+                    requireContext(),
+                    Manifest.permission.ACCESS_COARSE_LOCATION
+                )
+                == PackageManager.PERMISSION_GRANTED)
+    }
+
+    private fun isGPSEnabled(): Boolean {
+        val locationManager =
+            activity?.getSystemService(Context.LOCATION_SERVICE) as LocationManager
+        return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) || locationManager.isProviderEnabled(
+            LocationManager.NETWORK_PROVIDER
+        )
+    }
+
 }
