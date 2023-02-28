@@ -86,6 +86,7 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
         setHasOptionsMenu(true)
         setDisplayHomeAsUpEnabled(true)
 
+
         showInstructionsDialog()
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireContext())
 
@@ -143,7 +144,10 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
     @SuppressLint("MissingPermission")
     override fun onMapReady(googleMap: GoogleMap?) {
         map = googleMap!!
-        map.isMyLocationEnabled = true
+
+        if (locationPermissionsGranted()) {
+            map.isMyLocationEnabled = true
+        }
         getLocation()
 
         // put a marker to location that the user selected
@@ -235,16 +239,18 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
     }
 
     private fun checkIfPermissionsGrantedOrNot() {
-        if (ActivityCompat.checkSelfPermission(
-                requireContext(),
-                Manifest.permission.ACCESS_FINE_LOCATION
-            ) !=
-            PackageManager.PERMISSION_GRANTED &&
-            ActivityCompat.checkSelfPermission(
-                requireContext(),
-                Manifest.permission.ACCESS_COARSE_LOCATION
-            )
-            != PackageManager.PERMISSION_GRANTED
+        if (
+//            ActivityCompat.checkSelfPermission(
+//                requireContext(),
+//                Manifest.permission.ACCESS_FINE_LOCATION
+//            ) !=
+//            PackageManager.PERMISSION_GRANTED &&
+//            ActivityCompat.checkSelfPermission(
+//                requireContext(),
+//                Manifest.permission.ACCESS_COARSE_LOCATION
+//            )
+//            != PackageManager.PERMISSION_GRANTED
+           !locationPermissionsGranted()
         ) {
 
             // Request permissions if not
@@ -301,6 +307,21 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
         alert.setTitle("Tips")
 
         alert.show()
+    }
+
+    private fun locationPermissionsGranted(): Boolean {
+
+        return (ActivityCompat.checkSelfPermission(
+            requireContext(),
+            Manifest.permission.ACCESS_FINE_LOCATION
+        )
+                == PackageManager.PERMISSION_GRANTED
+                &&
+                ActivityCompat.checkSelfPermission(
+                    requireContext(),
+                    Manifest.permission.ACCESS_COARSE_LOCATION
+                )
+                == PackageManager.PERMISSION_GRANTED)
     }
 }
 
